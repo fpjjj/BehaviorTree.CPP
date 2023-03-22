@@ -45,6 +45,7 @@ typedef std::unordered_map<std::string, std::string> PortsRemapping;
 
 enum class PreCond
 {
+  //枚举的顺序还告诉我们执行顺序
   // order of the enums also tell us the execution order
   FAILURE_IF = 0,
   SUCCESS_IF,
