@@ -56,6 +56,7 @@ enum class PreCond
 
 enum class PostCond
 {
+  //枚举的顺序还告诉我们执行顺序
   // order of the enums also tell us the execution order
   ON_HALTED = 0,
   ON_FAILURE,
