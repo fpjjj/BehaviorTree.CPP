@@ -31,6 +31,7 @@
 
 namespace BT
 {
+// 这些信息主要由XMLParser使用。
 /// This information is used mostly by the XMLParser.
 struct TreeNodeManifest
 {
