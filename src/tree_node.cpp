@@ -218,6 +218,7 @@ NodeStatus TreeNode::waitValidStatus()
 
   while (isHalted())
   {
+    //直接等待，需其他线程通知
     state_condition_variable_.wait(lock);
   }
   return status_;

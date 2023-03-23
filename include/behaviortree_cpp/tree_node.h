@@ -77,16 +77,20 @@ struct NodeConfig
 {
   NodeConfig()
   {}
-
+  // 指向此节点使用的黑板的指针
   // Pointer to the blackboard used by this node
   Blackboard::Ptr blackboard;
+  // 可用于脚本编写的枚举列表
   // List of enums available for scripting
   std::shared_ptr<ScriptingEnumsRegistry> enums;
+  // 输入端口
   // input ports
   PortsRemapping input_ports;
+  // 输出端口
   // output ports
   PortsRemapping output_ports;
 
+  // 数字唯一标识符
   // Numberic unique identifier
   uint16_t uid = 0;
   // Unique human-readable name, that encapsulate the subtree
@@ -302,34 +306,41 @@ protected:
   void setStatus(NodeStatus new_status);
 
 private:
+  //节点名称
   const std::string name_;
-
+  //节点状态
   NodeStatus status_;
-
+  //等待其他线程通知
   std::condition_variable state_condition_variable_;
-
+  //状态互斥量
   mutable std::mutex state_mutex_;
-
+  //状态改变发射信号
   StatusChangeSignal state_change_signal_;
-
+  //节点配置
   NodeConfig config_;
-
+  //注册id
   std::string registration_ID_;
-
+  //PreTickCallback = std::function<NodeStatus(TreeNode&)>
+  //前置条件回调函数
   PreTickCallback pre_condition_callback_;
-
+  //std::function<NodeStatus(TreeNode&, NodeStatus)>
+  //后置条件回调函数
   PostTickCallback post_condition_callback_;
-
+  //注入回调函数互斥锁
   std::mutex callback_injection_mutex_;
-
+  //唤醒信号
   std::shared_ptr<WakeUpSignal> wake_up_;
 
+  //前置条件执行函数队列
   std::array<ScriptFunction, size_t(PreCond::COUNT_)> pre_parsed_;
+  //后置条件执行函数队列
   std::array<ScriptFunction, size_t(PostCond::COUNT_)> post_parsed_;
 
   Expected<NodeStatus> checkPreConditions();
   void checkPostConditions(NodeStatus status);
 
+  // 用于中断RUNNING节点执行的方法。
+  // 只有可能返回RUNNING的异步节点才能实现它。
   /// The method used to interrupt the execution of a RUNNING node.
   /// Only Async nodes that may return RUNNING should implement it.
   virtual void halt() = 0;

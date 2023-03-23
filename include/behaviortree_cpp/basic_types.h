@@ -19,6 +19,7 @@
 
 namespace BT
 {
+// 枚举可能的节点类型
 /// Enumerates the possible types of nodes
 enum class NodeType
 {
@@ -30,16 +31,18 @@ enum class NodeType
   SUBTREE
 };
 
+// 枚举每个节点在特定时间步长执行后可能处于的状态。
+// 重要提示：您的自定义节点不应返回IDLE。
 /// Enumerates the states every node can be in after execution during a particular
 /// time step.
 /// IMPORTANT: Your custom nodes should NEVER return IDLE.
 enum class NodeStatus
 {
-  IDLE = 0,
-  RUNNING = 1,
-  SUCCESS = 2,
-  FAILURE = 3,
-  SKIPPED = 4,
+  IDLE = 0,     //空闲
+  RUNNING = 1,  //运行中
+  SUCCESS = 2,  //成功
+  FAILURE = 3,  //失败
+  SKIPPED = 4,  //跳过
 };
 
 inline bool isStatusActive(const NodeStatus& status)
