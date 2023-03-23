@@ -47,10 +47,10 @@ enum class PreCond
 {
   //枚举的顺序还告诉我们执行顺序
   // order of the enums also tell us the execution order
-  FAILURE_IF = 0,
-  SUCCESS_IF,
-  SKIP_IF,
-  WHILE_TRUE,
+  FAILURE_IF = 0, //跳过并返回失败（如果条件为真）
+  SUCCESS_IF,     //跳过并返回成功（如果条件为 true）
+  SKIP_IF,        //如果条件为 true，则跳过此节点的执行，并返回true
+  WHILE_TRUE,     //与 _skipIf 相同，但如果条件变为 false，也可能中断正在运行的节点
   COUNT_
 };
 
@@ -58,10 +58,10 @@ enum class PostCond
 {
   //枚举的顺序还告诉我们执行顺序
   // order of the enums also tell us the execution order
-  ON_HALTED = 0,
-  ON_FAILURE,
-  ON_SUCCESS,
-  ALWAYS,
+  ON_HALTED = 0,  //在正在运行的节点停止时执行的脚本
+  ON_FAILURE,     //如果节点返回成功，则执行此脚本
+  ON_SUCCESS,     //如果节点返回成功，则执行此脚本
+  ALWAYS,         //如果节点返回成功或失败，则执行此脚本
   COUNT_
 };
 
@@ -331,9 +331,9 @@ private:
   //唤醒信号
   std::shared_ptr<WakeUpSignal> wake_up_;
 
-  //前置条件执行函数队列
+  //前置条件满足时的 脚本函数，由行为树工厂解析为脚本函数，主要是对端口/黑板的设置和对比
   std::array<ScriptFunction, size_t(PreCond::COUNT_)> pre_parsed_;
-  //后置条件执行函数队列
+  //后置条件满足时的 脚本函数
   std::array<ScriptFunction, size_t(PostCond::COUNT_)> post_parsed_;
 
   Expected<NodeStatus> checkPreConditions();

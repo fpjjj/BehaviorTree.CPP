@@ -315,11 +315,14 @@ std::unique_ptr<TreeNode> BehaviorTreeFactory::instantiateTreeNode(
   node->setRegistrationID(ID);
   node->config_.enums = scripting_enums_;
 
+  //分派条件-脚本
   auto AssignConditions = [](auto& conditions, auto& executors) {
     for (const auto& [cond_id, script] : conditions)
     {
+      //解析出执行脚本
       if (auto executor = ParseScript(script))
       {
+        //解析到节点的脚本函数队列中
         executors[size_t(cond_id)] = executor.value();
       }
       else
