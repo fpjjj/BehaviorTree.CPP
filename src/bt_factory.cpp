@@ -93,6 +93,7 @@ bool BehaviorTreeFactory::unregisterBuilder(const std::string& ID)
   return true;
 }
 
+// 注册构建器
 void BehaviorTreeFactory::registerBuilder(const TreeNodeManifest& manifest,
                                           const NodeBuilder& builder)
 {
@@ -106,10 +107,14 @@ void BehaviorTreeFactory::registerBuilder(const TreeNodeManifest& manifest,
   manifests_.insert({manifest.registration_ID, manifest});
 }
 
+// ID: 为注册动作的编号(如：CheckBattery)
+// tick_functor： 节点tick()时调用的函数
+// typedef std::unordered_map<std::string, PortInfo> PortsList;
 void BehaviorTreeFactory::registerSimpleCondition(
     const std::string& ID, const SimpleConditionNode::TickFunctor& tick_functor,
     PortsList ports)
 {
+  // using NodeBuilder = std::function<std::unique_ptr<TreeNode>(const std::string&, const NodeConfig&)>;
   NodeBuilder builder = [tick_functor, ID](const std::string& name,
                                            const NodeConfig& config) {
     return std::make_unique<SimpleConditionNode>(name, tick_functor, config);

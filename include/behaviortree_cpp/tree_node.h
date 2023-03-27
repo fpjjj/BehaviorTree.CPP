@@ -33,12 +33,12 @@ namespace BT
 {
 // 这些信息主要由XMLParser使用。
 /// This information is used mostly by the XMLParser.
-struct TreeNodeManifest
+struct TreeNodeManifest         //节点名单
 {
-  NodeType type;
-  std::string registration_ID;
-  PortsList ports;
-  std::string description;
+  NodeType type;                //节点类型
+  std::string registration_ID;  //节点注册id (如：“CheckBattery”)
+  PortsList ports;              //节点的端口信息  typedef std::unordered_map<std::string, PortInfo> PortsList;
+  std::string description;      //节点描述
 };
 
 typedef std::unordered_map<std::string, std::string> PortsRemapping;
@@ -85,9 +85,13 @@ struct NodeConfig
   std::shared_ptr<ScriptingEnumsRegistry> enums;
   // 输入端口
   // input ports
+  //typedef std::unordered_map<std::string, std::string> PortsRemapping;
+  //“=”代表不存在映射，其他则代表映射的其他端口
   PortsRemapping input_ports;
   // 输出端口
   // output ports
+  //typedef std::unordered_map<std::string, std::string> PortsRemapping;
+  //“=”代表不存在映射，其他则代表映射的其他端口
   PortsRemapping output_ports;
 
   // 数字唯一标识符
@@ -113,6 +117,8 @@ inline constexpr bool hasNodeNameCtor()
   return std::is_constructible<T, const std::string&>::value;
 }
 
+//ExtraArgs是否能够构造这个T类型的对象
+//std::is_constructible用于判断一个类型是否可以通过特定的参数列表进行构造
 template <typename T, typename... ExtraArgs>
 inline constexpr bool hasNodeFullCtor()
 {
@@ -120,12 +126,20 @@ inline constexpr bool hasNodeFullCtor()
                                ExtraArgs...>::value;
 }
 
+// 行为树节点的抽象基类
 /// Abstract base class for Behavior Tree Nodes
 class TreeNode
 {
 public:
   typedef std::shared_ptr<TreeNode> Ptr;
 
+  /**
+  *@brief树节点主构造函数。
+  *@param name    实例的名称，而不是类型。
+  *@param config  关于输入/输出端口的信息。请参阅节点配置
+  *注意：如果您的自定义节点具有端口，则派生类必须实现：
+  *   static PortsList providedPorts();
+  */
   /**
      * @brief TreeNode main constructor.
      *
@@ -149,9 +163,11 @@ public:
 
   NodeStatus status() const;
 
+  // 实例的名称，而不是类型
   /// Name of the instance, not the type
   const std::string& name() const;
 
+  // 阻塞函数，该函数将休眠，直到使用RUNNING、FAILURE或SUCCESS调用setStatus（）为止
   /// Blocking function that will sleep until the setStatus() is called with
   /// either RUNNING, FAILURE or SUCCESS.
   BT::NodeStatus waitValidStatus();
@@ -168,6 +184,12 @@ public:
       std::function<NodeStatus(TreeNode&, NodeStatus)>;
 
   /**
+  *@brief subscribeToStatusChange用于将回调附加到状态更改。
+  *当StatusChangeSubscriber超出范围（它是一个shared_ptr）时，回调将自动取消订阅。
+  *@param callback状态更改时要执行的回调。
+  *@返回订阅者句柄。
+  */
+  /**
      * @brief subscribeToStatusChange is used to attach a callback to a status change.
      * When StatusChangeSubscriber goes out of scope (it is a shared_ptr) the callback
      * is unsubscribed automatically.
@@ -178,6 +200,12 @@ public:
      */
   StatusChangeSubscriber subscribeToStatusChange(StatusChangeCallback callback);
 
+    /**此方法将带有签名的回调附加到TreeNode：
+  * Optional<NodeStatus> myCallback(TreeNode& node)
+  *此回调在tick（）之前执行，如果它返回有效的Optional＜NodeStatus＞，
+  *实际的tick（）将不会执行，而是返回此结果。
+  *这对于在运行时注入TreeNode的“伪”实现非常有用
+  */
   /** This method attaches to the TreeNode a callback with signature:
      *
      *     Optional<NodeStatus> myCallback(TreeNode& node)
@@ -350,6 +378,7 @@ private:
 template <typename T>
 inline Result TreeNode::getInput(const std::string& key, T& destination) const
 {
+  // 解决T是枚举的特殊情况
   // address the special case where T is an enum
   auto ParseString = [this](const std::string& str) -> T
   {
@@ -383,6 +412,7 @@ inline Result TreeNode::getInput(const std::string& key, T& destination) const
   auto remapped_res = getRemappedKey(key, remap_it->second);
   try
   {
+    // 纯字符串，而不是黑板键
     // pure string, not a blackboard key
     if (!remapped_res)
     {
@@ -422,6 +452,7 @@ inline Result TreeNode::getInput(const std::string& key, T& destination) const
   }
 }
 
+//在配置中寻找到端口信息，在黑板中查找到并进行设置
 template <typename T>
 inline Result TreeNode::setOutput(const std::string& key, const T& value)
 {
@@ -440,13 +471,17 @@ inline Result TreeNode::setOutput(const std::string& key, const T& value)
                                           "contain the key: [",
                                           key, "]"));
   }
+  //remapped_key代表映射值
   StringView remapped_key = remap_it->second;
+  //"="代表不存在映射
   if (remapped_key == "=")
   {
     remapped_key = key;
   }
+  //不是"="则检查，映射的值是否在黑板中存在
   if (isBlackboardPointer(remapped_key))
   {
+    //去掉{}/${}取到里面的值
     remapped_key = stripBlackboardPointer(remapped_key);
   }
   config_.blackboard->set(static_cast<std::string>(remapped_key), value);
@@ -454,10 +489,12 @@ inline Result TreeNode::setOutput(const std::string& key, const T& value)
   return {};
 }
 
+// 使用T::providedPorts（）填充端口列表的实用函数
 // Utility function to fill the list of ports using T::providedPorts();
 template <typename T>
 inline void assignDefaultRemapping(NodeConfig& config)
 {
+  //typedef std::unordered_map<std::string, PortInfo> PortsList;
   for (const auto& it : getProvidedPorts<T>())
   {
     const auto& port_name = it.first;

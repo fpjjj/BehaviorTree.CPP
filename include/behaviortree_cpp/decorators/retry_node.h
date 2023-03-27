@@ -18,6 +18,17 @@
 namespace BT
 {
 /**
+*@brief RetryNode用于在失败时多次执行子级。
+*如果子级返回SUCCESS，则循环将停止，并且此节点返回SUCCESS。
+*如果子级返回FAILURE，则此节点最多会重试N次（N是从端口“num_attempts”读取的）。
+*示例：
+ * <RetryUntilSuccessful num_attempts="3">
+ *     <OpenDoor/>
+ * </RetryUntilSuccessful>
+*注：
+*RetryNodeTypo仅用于支持不推荐使用的打字错误“RetryUntilSucceful”（请注意Succeful中的单个“s”）
+*/
+/**
  * @brief The RetryNode is used to execute a child several times if it fails.
  *
  * If the child returns SUCCESS, the loop is stopped and this node
@@ -54,10 +65,12 @@ public:
   virtual void halt() override;
 
 private:
+  //最大的尝试次数
   int max_attempts_;
+  //已经尝试的次数
   int try_count_;
   bool all_skipped_ = true;
-
+  //是否已经读取max_attempts_（构造函数/黑板获取）
   bool read_parameter_from_ports_;
   static constexpr const char* NUM_ATTEMPTS = "num_attempts";
 

@@ -17,6 +17,15 @@
 
 namespace BT
 {
+  /**
+  *@brief SequenceStarNode 用于在有序序列中勾选子级。
+  *如果任何子项返回RUNNING，则不会再次勾选以前的子项。
+  *-如果所有子节点都返回SUCCESS，则此节点返回SUCCESS。
+  *-如果一个子节点返回RUNNING，则该节点返回RUNINING。
+  *循环未重新启动，将再次勾选同一个正在运行的子项。
+  *-如果子级返回FAILURE，则停止循环并返回FAILUEL。
+  *循环未重新启动，将再次勾选同一个正在运行的子项。
+  */
 /**
  * @brief The SequenceStarNode is used to tick children in an ordered sequence.
  * If any child returns RUNNING, previous children are not ticked again.

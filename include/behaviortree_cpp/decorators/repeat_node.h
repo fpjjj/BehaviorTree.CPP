@@ -17,6 +17,10 @@
 
 namespace BT
 {
+
+// @brief RepeatNode用于多次执行子级，只要成功即可。
+// 若要成功，子级必须返回SUCCESS N次（端口“num_cycles”）
+// 如果子节点返回FAILURE，则循环停止，此节点返回FAILURE
 /**
  * @brief The RepeatNode is used to execute a child several times, as long
  * as it succeed.
@@ -48,8 +52,11 @@ public:
   }
 
 private:
+  //需要重复的次数
   int num_cycles_;
+  //已经重复的次数
   int repeat_count_;
+  //？
   bool all_skipped_ = true;
 
   bool read_parameter_from_ports_;

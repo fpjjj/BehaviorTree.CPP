@@ -121,6 +121,7 @@ void TreeNode::setStatus(NodeStatus new_status)
 
 Expected<NodeStatus> TreeNode::checkPreConditions()
 {
+  // 检查先决条件
   // check the pre-conditions
   for (size_t index = 0; index < size_t(PreCond::COUNT_); index++)
   {
@@ -132,9 +133,11 @@ Expected<NodeStatus> TreeNode::checkPreConditions()
     }
     Ast::Environment env = {config().blackboard, config().enums};
     auto result = parse_executor(env);
+    // 如果条件成立该怎么办
     // what to do if the condition is true
     if (result.cast<bool>())
     {
+      // 某些前提条件仅在节点启动时应用
       // Some preconditions are applied only when the node is started
       if (status_ == NodeStatus::IDLE)
       {

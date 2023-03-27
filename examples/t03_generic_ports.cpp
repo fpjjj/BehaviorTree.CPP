@@ -2,16 +2,19 @@
 
 using namespace BT;
 
+// 本教程将教您如何在端口类型不是std:：string时处理端口
 /* This tutorial will teach you how to deal with ports when its
  *  type is not std::string.
 */
 
+// 我们希望能够使用此自定义类型
 // We want to be able to use this custom type
 struct Position2D
 {
   double x, y;
 };
 
+//建议（或在某些情况下，强制）定义convertFromString的模板专用化，将字符串转换为Position2D
 // It is recommended (or, in some cases, mandatory) to define a template
 // specialization of convertFromString that converts a string to Position2D.
 namespace BT
@@ -85,6 +88,12 @@ public:
 
 //----------------------------------------------------------------
 
+/**该树是一个由4个动作组成的序列
+*1）使用CalculateGoal操作将Position2D的值存储在条目“目标位置”中。
+*2）调用PrintTarget。输入“target”将从黑板条目“GoalPosition”中读取。
+*3）使用内置的动作脚本来编写键“OtherGoal”。将在发动机罩下进行从字符串到位置2D的转换。
+*4）调用PrintTarget。输入的“目标”将从黑板条目“OtherGoal”中读取。
+*/
 /** The tree is a Sequence of 4 actions
 
 *  1) Store a value of Position2D in the entry "GoalPosition"

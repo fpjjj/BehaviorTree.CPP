@@ -27,6 +27,7 @@
 
 namespace BT
 {
+// 构建器模式
 /// The term "Builder" refers to the Builder Pattern (https://en.wikipedia.org/wiki/Builder_pattern)
 using NodeBuilder =
     std::function<std::unique_ptr<TreeNode>(const std::string&, const NodeConfig&)>;
@@ -79,6 +80,8 @@ inline TreeNodeManifest CreateManifest(const std::string& ID,
 
 constexpr const char* PLUGIN_SYMBOL = "BT_RegisterNodesFromPlugin";
 
+// 结构用于存储一棵树。
+// 如果此对象超出范围，则该树将被销毁
 /**
  * @brief Struct used to store a tree.
  * If this object goes out of scope, the tree is destroyed.
@@ -86,6 +89,7 @@ constexpr const char* PLUGIN_SYMBOL = "BT_RegisterNodesFromPlugin";
 class Tree
 {
 public:
+  // 一棵树可以包含多个子树
   // a tree can contain multiple subtree.
   struct Subtree
   {
@@ -184,6 +188,8 @@ private:
 
 class Parser;
 
+//BehaviorTreeFactory用于在运行时创建TreeNode的实例
+//一些节点类型是“内置的”，而另一些则是使用定义的，需要使用唯一的ID进行注册
 /**
  * @brief The BehaviorTreeFactory is used to create instances of a
  * TreeNode at run-time.
@@ -286,6 +292,10 @@ public:
    */
   void clearRegisteredBehaviorTrees();
 
+  // instantiateTreeNode创建先前注册的TreeNode的实例
+  // 此特定实例的名称
+  // 注册时使用的ID
+  // 传递给树节点的构造函数的配置
   /**
      * @brief instantiateTreeNode creates an instance of a previously registered TreeNode.
      *
@@ -298,6 +308,8 @@ public:
                                                 const std::string& ID,
                                                 const NodeConfig& config) const;
 
+  // registerNodeType，用于显式传递端口列表。
+  // 不需要实现静态方法providedPorts()
   /** registerNodeType where you explicitly pass the list of ports.
    *  Doesn't require the implementation of static method providedPorts()
   */
