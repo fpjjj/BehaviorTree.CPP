@@ -199,11 +199,11 @@ public:
   void setPortInfo(std::string key, const PortInfo& info);
 
   const PortInfo* portInfo(const std::string& key);
-
+  // 添加内部到外部的映射
   void addSubtreeRemapping(StringView internal, StringView external);
-
+  // 打印黑板中的所有键和端口信息
   void debugMessage() const;
-
+  // 获取所有键的列表
   std::vector<StringView> getKeys(bool include_remapped = true) const;
 
   void clear()
