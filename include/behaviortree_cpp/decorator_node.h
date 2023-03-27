@@ -34,6 +34,7 @@ public:
 
   NodeStatus executeTick() override;
 
+  // 将子项的状态设置为IDLE（空闲）。还向RUNNING子级发送halt（）信号
   /// Set the status of the child to IDLE.
   /// also send a halt() signal to a RUNNING child
   void resetChild();

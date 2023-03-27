@@ -55,6 +55,7 @@ public:
     return NodeType::CONTROL;
   }
 
+  //将所有子项的状态设置为IDLE（空闲），还向所有RUNNING子级发送一个halt（）信号
   /// Set the status of all children to IDLE.
   /// also send a halt() signal to all RUNNING children
   void resetChildren();

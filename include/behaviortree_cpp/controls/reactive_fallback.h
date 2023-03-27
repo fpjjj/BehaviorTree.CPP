@@ -17,6 +17,16 @@
 namespace BT
 {
 /**
+  *@brief ReactiveFallback类似于ParallelNode。
+  *所有的孩子都从第一个到最后打勾：
+  *-如果一个孩子返回RUNNING，则继续到下一个兄弟姐妹。
+  *-如果一个孩子返回FAILURE，则继续下一个兄弟姐妹。
+  *-如果子级返回SUCCESS，则停止并返回SUCCESS。
+  *如果所有子节点都失败，则此节点返回FAILURE。
+  *重要提示：为了正常工作，这个节点不应该有超过一个异步子节点。
+*/
+
+/**
  * @brief The ReactiveFallback is similar to a ParallelNode.
  * All the children are ticked from first to last:
  *

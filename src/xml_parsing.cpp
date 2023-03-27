@@ -67,6 +67,7 @@ struct XMLParser::Pimpl
 
   void loadDocImpl(tinyxml2::XMLDocument* doc, bool add_includes);
 
+  //打开的文件
   std::list<std::unique_ptr<tinyxml2::XMLDocument> > opened_documents;
   std::map<std::string, const XMLElement*> tree_roots;
 

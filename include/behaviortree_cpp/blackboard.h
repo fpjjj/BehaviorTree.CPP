@@ -213,6 +213,7 @@ public:
     internal_to_external_.clear();
   }
 
+  //在使用get（）和getAny（）之前锁定这个互斥对象，并在使用完该值后解锁它。
   // Lock this mutex before using get() and getAny() and unlock it while you have
   // done using the value.
   std::recursive_mutex& entryMutex() const
@@ -235,7 +236,7 @@ private:
   };
 
   mutable std::mutex mutex_;
-  mutable std::recursive_mutex entry_mutex_;
+  mutable std::recursive_mutex entry_mutex_;  //读写的互斥量
   std::unordered_map<std::string, Entry> storage_;
   std::weak_ptr<Blackboard> parent_bb_;
   std::unordered_map<std::string, std::string> internal_to_external_;

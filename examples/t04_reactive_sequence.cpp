@@ -5,6 +5,10 @@
 
 using namespace BT;
 
+/**本教程将教您：
+*-序列和反应序列之间的差异
+*-如何创建异步ActionNode。
+*/
 /** This tutorial will teach you:
  *
  *  - The difference between Sequence and ReactiveSequence
@@ -60,9 +64,13 @@ int main()
   factory.registerNodeType<MoveBaseAction>("MoveBase");
   factory.registerNodeType<SaySomething>("SaySomething");
 
+  // 使用xml_text_sequence和xml_text-sequence_star比较状态转换和消息
   // Compare the state transitions and messages using either
   // xml_text_sequence and xml_text_sequence_star
 
+  //您应该注意的主要区别是：
+  //1）使用序列时，BatteryOK在__each__tick（）执行
+  //2）当使用SequenceStar时，这些ConditionNodes只执行__一次__
   // The main difference that you should notice is:
   //  1) When Sequence is used, BatteryOK is executed at __each__ tick()
   //  2) When SequenceStar is used, those ConditionNodes are executed only __once__.
@@ -89,6 +97,7 @@ int main()
       status = tree.tickOnce();
       std::cout << "--- status: " << toStr(status) << "\n\n";
 
+      // 如果仍在运行，请增加一些等待时间
       // if still running, add some wait time
       if (status == NodeStatus::RUNNING)
       {

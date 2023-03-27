@@ -50,6 +50,7 @@ public:
     BT::SyncActionNode(name, config)
   {}
 
+  // 此操作只需在端口“text”中写入一个值
   // This Action simply write a value in the port "text"
   BT::NodeStatus tick() override
   {
@@ -57,6 +58,7 @@ public:
     return BT::NodeStatus::SUCCESS;
   }
 
+  // 具有端口的节点必须实现此STATIC方法
   // A node having ports MUST implement this STATIC method
   static BT::PortsList providedPorts()
   {
@@ -70,14 +72,20 @@ int main()
 
   BehaviorTreeFactory factory;
 
+  //类SaySomething有一个名为providedPorts（）的方法，用于定义INPUTS。
+  //在这种情况下，它需要一个名为“消息”的输入
   // The class SaySomething has a method called providedPorts() that define the INPUTS.
   // In this case, it requires an input called "message"
   factory.registerNodeType<SaySomething>("SaySomething");
 
+  //与SaySomething类似，ThinkWhatToSay有一个名为“text”的OUTPUT端口
+  //这两个端口都是std:：string，因此它们可以相互连接
   // Similarly to SaySomething, ThinkWhatToSay has an OUTPUT port called "text"
   // Both these ports are std::string, therefore they can connect to each other
   factory.registerNodeType<ThinkWhatToSay>("ThinkWhatToSay");
 
+  //SimpleActionNodes无法定义自己的方法providedPorts（），因此
+  //如果我们希望Action使用getInput（）或setOutput（），我们必须显式传递PortsList；
   // SimpleActionNodes can not define their own method providedPorts(), therefore
   // we have to pass the PortsList explicitly if we want the Action to use getInput()
   // or setOutput();

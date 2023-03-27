@@ -51,28 +51,34 @@ Pose2D convertFromString(StringView key)
 
 namespace chr = std::chrono;
 
+// 这是一个异步操作
 // This is an asynchronous operation
 class MoveBaseAction : public BT::StatefulActionNode
 {
   public:
+    // 任何具有端口的TreeNode都必须具有具有此签名的构造函数
     // Any TreeNode with ports must have a constructor with this signature
     MoveBaseAction(const std::string& name, const BT::NodeConfig& config)
       : StatefulActionNode(name, config)
     {}
 
+    // 必须定义此静态方法
     // It is mandatory to define this static method.
     static BT::PortsList providedPorts()
     {
         return{ BT::InputPort<Pose2D>("goal") };
     }
 
+    // 该函数在开始时被调用一次
     // this function is invoked once at the beginning.
     BT::NodeStatus onStart() override;
 
+    // 如果onStart（）返回RUNNING，我们将继续调用此方法，直到它返回与RUNNING不同的内容
     // If onStart() returned RUNNING, we will keep calling
     // this method until it return something different from RUNNING
     BT::NodeStatus onRunning() override;
 
+    // 如果操作被另一个节点中止，则要执行的回调
     // callback to execute if the action was aborted by another node
     void onHalted() override;
 

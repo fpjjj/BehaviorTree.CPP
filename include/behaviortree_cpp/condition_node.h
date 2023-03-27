@@ -35,6 +35,11 @@ public:
   }
 };
 
+// SimpleConditionNode提供了一个易于使用的ConditionNode
+// 用户只需提供一个带有此签名的回调
+// BT:：NodeStatus函数名称（无效）
+// 这避免了从ActionNode继承的麻烦
+// SimpleConditionNode不支持暂停、NodeParameters或黑板。
 /**
  * @brief The SimpleConditionNode provides an easy to use ConditionNode.
  * The user should simply provide a callback with this signature
@@ -51,6 +56,7 @@ class SimpleConditionNode : public ConditionNode
 public:
   typedef std::function<NodeStatus(TreeNode&)> TickFunctor;
 
+  // 调用tick（）时必须提供要调用的函数
   // You must provide the function to call when tick() is invoked
   SimpleConditionNode(const std::string& name, TickFunctor tick_functor,
                       const NodeConfig& config);

@@ -3,6 +3,10 @@
 
 using namespace BT;
 
+/**行为树用于创建一个逻辑来决定何时“做”。因此，我们的主要组成部分是行动和条件。
+*在本教程中，我们将学习如何创建自定义ActionNodes。
+*重要的是要记住，NodeTree只是调用回调的一种方式（称为tick（））。这些回调是由用户实现的。
+*/
 /** Behavior Tree are used to create a logic to decide what
  * to "do" and when. For this reason, our main building blocks are
  * Actions and Conditions.

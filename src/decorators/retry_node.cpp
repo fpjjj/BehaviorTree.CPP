@@ -41,6 +41,7 @@ void RetryNode::halt()
 
 NodeStatus RetryNode::tick()
 {
+  // 读取 max_attempts_
   if (read_parameter_from_ports_)
   {
     if (!getInput(NUM_ATTEMPTS, max_attempts_))
@@ -62,6 +63,7 @@ NodeStatus RetryNode::tick()
     NodeStatus prev_status = child_node_->status();
     NodeStatus child_status = child_node_->executeTick();
 
+    // 找到活动的孩子后，立即切换到RUNNING状态
     // switch to RUNNING state as soon as you find an active child
     all_skipped_ &= (child_status == NodeStatus::SKIPPED);
 
@@ -79,6 +81,7 @@ NodeStatus RetryNode::tick()
 
         resetChild();
 
+        // 如果子级是异步的，则返回执行流，以使其可中断
         // Return the execution flow if the child is async,
         // to make this interruptable.
         if (requiresWakeUp() && prev_status == NodeStatus::IDLE && do_loop)
@@ -94,6 +97,7 @@ NodeStatus RetryNode::tick()
       }
 
       case NodeStatus::SKIPPED: {
+        // 孩子被跳过了。把这个也滑下来
         // the child has been skipped. Slip this too
         return NodeStatus::SKIPPED;
       }

@@ -65,6 +65,11 @@ enum class PortDirection
 using StringView = std::string_view;
 
 /**
+*convertFromString用于将字符串转换为自定义类型。
+*TreeNode:：getInput（）在后台调用此函数，但仅当输入端口包含字符串时调用
+*如果您有一个自定义类型，则需要实现相应的模板专用化。
+*/
+/**
  * convertFromString is used to convert a string into a custom type.
  *
  * This function is invoked under the hood by TreeNode::getInput(), but only when the
@@ -110,6 +115,7 @@ float convertFromString<float>(StringView str);
 template <>
 double convertFromString<double>(StringView str);
 
+// 用字符“；”分隔的整数
 template <>   // Integer numbers separated by the character ";"
 std::vector<int> convertFromString<std::vector<int>>(StringView str);
 
@@ -283,11 +289,11 @@ public:
   }
 
 private:
-  PortDirection _type;
-  std::type_index _type_info;
-  StringConverter _converter;
-  std::string description_;
-  std::optional<std::string> default_value_;
+  PortDirection _type;          //端口方向
+  std::type_index _type_info;   //端口数据类型index
+  StringConverter _converter;   //类型转换器
+  std::string description_;     //描述
+  std::optional<std::string> default_value_;  //默认值
 };
 
 template <typename T = PortInfo::AnyTypeAllowed> [[nodiscard]]

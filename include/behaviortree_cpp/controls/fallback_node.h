@@ -39,7 +39,9 @@ public:
   virtual void halt() override;
 
 private:
+  //当前执行的字节点index
   size_t current_child_idx_;
+  //是否所有的节点都是跳过的
   bool all_skipped_;
 
   virtual BT::NodeStatus tick() override;

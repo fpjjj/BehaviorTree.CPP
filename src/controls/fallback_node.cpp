@@ -39,6 +39,7 @@ NodeStatus FallbackNode::tick()
     auto prev_status = current_child_node->status();
     const NodeStatus child_status = current_child_node->executeTick();
 
+    // 找到活动的孩子后，立即切换到RUNNING状态
     // switch to RUNNING state as soon as you find an active child
     all_skipped_ &= (child_status == NodeStatus::SKIPPED);
 
@@ -54,6 +55,7 @@ NodeStatus FallbackNode::tick()
       }
       case NodeStatus::FAILURE: {
         current_child_idx_++;
+        // 如果子级是异步的，则返回执行流，以使其可中断
         // Return the execution flow if the child is async,
         // to make this interruptable.
         if (requiresWakeUp() && prev_status == NodeStatus::IDLE &&
@@ -65,6 +67,7 @@ NodeStatus FallbackNode::tick()
       }
       break;
       case NodeStatus::SKIPPED: {
+        // 已请求跳过此节点
         // It was requested to skip this node
         current_child_idx_++;
       }
@@ -75,6 +78,7 @@ NodeStatus FallbackNode::tick()
     }   // end switch
   }     // end while loop
 
+  //整个while循环已完成，这意味着所有的孩子都返回了FAILURE
   // The entire while loop completed. This means that all the children returned FAILURE.
   if (current_child_idx_ == children_count)
   {
@@ -82,6 +86,7 @@ NodeStatus FallbackNode::tick()
     current_child_idx_ = 0;
   }
 
+  // 如果已跳过所有节点，则跳过
   // Skip if ALL the nodes have been skipped
   return all_skipped_ ? NodeStatus::SKIPPED : NodeStatus::FAILURE;
 }

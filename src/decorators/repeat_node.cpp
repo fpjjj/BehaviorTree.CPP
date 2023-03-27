@@ -54,6 +54,7 @@ NodeStatus RepeatNode::tick()
     NodeStatus const prev_status = child_node_->status();
     NodeStatus child_status = child_node_->executeTick();
 
+    // 找到活动的孩子后，立即切换到RUNNING状态
     // switch to RUNNING state as soon as you find an active child
     all_skipped_ &= (child_status == NodeStatus::SKIPPED);
 
@@ -65,6 +66,7 @@ NodeStatus RepeatNode::tick()
 
         resetChild();
 
+        // 如果子级是异步的，则返回执行流，以使其可中断。
         // Return the execution flow if the child is async,
         // to make this interruptable.
         if (requiresWakeUp() && prev_status == NodeStatus::IDLE && do_loop)
@@ -86,6 +88,7 @@ NodeStatus RepeatNode::tick()
       }
 
       case NodeStatus::SKIPPED: {
+        // 孩子被跳过了。也跳过装饰器。不过，不要重置计数器！
         // the child has been skipped. Skip the decorator too.
         // Don't reset the counter, though !
         return NodeStatus::IDLE;

@@ -44,6 +44,9 @@ public:
   }
 };
 
+//SyncActionNode = 同步动作节点
+//SyncActionNode是一个ActionNode显式地防止状态RUNNING，并且不需要halt（）的实现。
+//显式：执行后返回RUNNING状态则抛异常
 /**
  * @brief The SyncActionNode is an ActionNode that
  * explicitly prevents the status RUNNING and doesn't require
@@ -55,6 +58,7 @@ public:
   SyncActionNode(const std::string& name, const NodeConfig& config);
   ~SyncActionNode() override = default;
 
+  //如果派生类返回RUNNING，则抛异常
   /// throws if the derived class return RUNNING.
   virtual NodeStatus executeTick() override;
 
@@ -63,6 +67,16 @@ public:
   {}
 };
 
+/**
+*@brief SimpleActionNode提供了一个易于使用的SyncActionNode。
+*用户只需提供一个带有此签名的回调
+*BT:：节点状态函数名称（树节点&）
+*这避免了从ActionNode继承的麻烦。
+*使用lambdas或std:：bind可以很容易地将指针传递给方法。
+*SimpleActionNode是同步执行的，不支持暂停。
+*不支持NodeParameters。
+ */
+//Note：TickFunctor不应该是一个会返回RUNNING的回调函数
 /**
  * @brief The SimpleActionNode provides an easy to use SyncActionNode.
  * The user should simply provide a callback with this signature
