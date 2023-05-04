@@ -15,6 +15,14 @@
 
 #include "behaviortree_cpp/control_node.h"
 
+/*
+FallbackNode
+FallbackNode是一个控制节点，用于尝试不同的策略，直到其中一个成功。
+如果任何子节点返回RUNNING，则不会再次触发前面的子节点。
+如果所有子节点都返回FAILURE，则此节点返回FAILURE。
+如果子节点返回RUNNING，则此节点返回RUNNING。
+如果子节点返回SUCCESS，则停止循环并返回SUCCESS。
+*/
 namespace BT
 {
 /**
